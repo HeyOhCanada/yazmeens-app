@@ -1,0 +1,52 @@
+#Yazmeen's App, a scouting app for FIRST robotics
+#Copyright (C) 2014 FRC Team 203
+#Written by Juliet Summers
+# This program is free software: you can redistribute it and/or modify
+#it under the terms of the GNU General Public License as published by
+#the Free Software Foundation, either version 3 of the License, or
+#(at your option) any later version.
+
+#This program is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU General Public License for more details.
+
+#You should have received a copy of the GNU General Public License
+#along with this program.  If not, see <http://www.gnu.org/licenses/>.
+<LayoutCreator>:
+    size: 1024, 768
+    page: 0
+
+    StackLayout:
+        id: preview
+        spacing: 5
+
+    RelativeLayout:
+        size_hint: (.8,1)
+        pos: (204.8,0)
+        canvas:
+            Color:
+                rgb: (.3,.3,1)
+            Rectangle:
+                size: self.size
+                pos: self.parent.pos
+        Widget:
+            canvas:
+                Color:
+                    rgb: .3,.3,.3
+                Rectangle:
+                    size: self.size
+            size_hint: (.05,1)
+        Button:
+            text: 'Counter'
+            size_hint: (None, None)
+            size: (600, 200)
+            pos: 50, 560
+            on_release: root.clickEdit('counter',preview)
+        Button:
+            text: 'Delete'
+            size_hint: (None, None)
+            size: (600, 200)
+            pos: 50, 360
+            on_release: root.deleteMode = not root.deleteMode
+
