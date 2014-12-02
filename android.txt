@@ -1,0 +1,3 @@
+title=Yazmeen's App
+author=Team 203
+orientation=landscape
