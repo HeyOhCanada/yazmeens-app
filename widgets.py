@@ -1,5 +1,5 @@
 #Yazmeen's App, a scouting app for FIRST robotics
-#Copyright (C) 2014 FRC Team 203
+#Copyright (C) 2014 Camden County Technical Schools FRC Team 203
 #Written by Juliet Summers
 # This program is free software: you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -41,11 +41,11 @@ class Counter(CustomBase):
     def __init__(self,label,numList,**kwargs):
     #50 is a good size for the buttons, so the width should be the number of buttons * 50
         super(Counter, self).__init__(rows=3,col_force_default=True,
-            col_default_width=len(numList)*50,width=len(numList)*50,height=160,**kwargs)
+            col_default_width=len(numList)*50,width=len(numList)*50,height=200,**kwargs)
         #create all subwidgets
         self.label=Label(text=label,size_hint_y=None, height=40)
         self.display=Label(text='0',size_hint_y=None, height=40)
-        self.counters=GridLayout(cols=len(numList),rows=2,size_hint_y=None, height=90)
+        self.counters=GridLayout(cols=len(numList),rows=2,size_hint_y=None, height=120)
         #loop over numList to add the inc/dec buttons
         for x in numList:
             self.counters.add_widget(Button(text='+%i'%x,on_release=lambda z,w=x:self.update(w)))
