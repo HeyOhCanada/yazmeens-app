@@ -13,30 +13,38 @@
 
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#: import Animation kivy.animation.Animation
+
 <LayoutCreator>:
     size: 1024, 768
-    page: 0
 
     StackLayout:
         id: preview
+        size: 1024, 768
+        pos: (0,0)
         spacing: 5
 
     RelativeLayout:
+        id: sideBar
         size_hint: (.8,1)
-        pos: (204.8,0)
+        pos: (980,0)
         canvas:
             Color:
                 rgb: (.3,.3,1)
             Rectangle:
                 size: self.size
                 pos: self.parent.pos
-        Widget:
-            canvas:
-                Color:
-                    rgb: .3,.3,.3
-                Rectangle:
-                    size: self.size
+        Button:
+            #pos_hint: {'x':.95, 'y':0}
+            #canvas:
+                #Color:
+                    #rgb: .3,.3,.3
+                #Rectangle:
+                    #size: self.size
             size_hint: (.05,1)
+            #swaps the position between 204 and 980
+            on_release: Animation(x=(-((sideBar.x-204)-776))+204,d=.5,t='in_out_quad').start(sideBar)
         Button:
             text: 'Counter'
             size_hint: (None, None)
