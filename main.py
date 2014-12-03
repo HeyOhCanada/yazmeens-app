@@ -40,34 +40,22 @@ class LayoutCreator(FloatLayout):
         super(LayoutCreator, self).__init__(**kwargs)
         self.previewedWidgets=[]#list to be filled with all the widgets added
         self.deleteMode=False#when set to true, allows widgets to be deleted on touch
-    #def on_touch_up(self, touch):
-        #if self.page: #page is 0 if the thing is closed, 1 if open
-            #if Widget(pos=(51.2, 0), size=(51.2,768)).collide_point(*touch.pos):#position when open
-                #self.page=0
-                #return True #clicked on the button; swallow the touch
-            #else:
-                #return super(LayoutCreator, self).on_touch_up(touch) #let the touch propogate
-        #else: #page is closed
-            #if Widget(pos=(972.8,0), size=(51.2,768)).collide_point(*touch.pos):#position when closed
-                #self.page=1
-                #return True #clicked on the button; swallow the touch
-            #elif self.deleteMode:#if page is closed and delete mode is on and the button wasn't clicked
-                #for x in self.previewedWidgets[:]:#loop through the list of widgets
-                    #if x.collide_point(*touch.pos):#if you touched a widget,
-                        #x.removeSelf()#call its removeSelf method
-                        #self.previewedWidgets.remove(x)#and remove it from our list of widgets
-                        #return True
-                #return super(LayoutCreator, self).on_touch_up(touch) #let the touch propogate
-            #else:#we didn't click on any widgets or the button
-                #return super(LayoutCreator, self).on_touch_up(touch) #let the touch propogate
+        
+    def on_touch_up(self, touch):
+        if self.closed and self.deleteMode:#if delete mode is on and the sidebar is closed
+            for x in self.previewedWidgets[:]:#loop through the list of widgets
+                if x.collide_point(*touch.pos):#if you touched a widget,
+                    x.removeSelf()#call its removeSelf method
+                    self.previewedWidgets.remove(x)#and remove it from our list of widgets
+                    return True
+            return super(LayoutCreator, self).on_touch_up(touch) #let the touch propogate
+        else:#we didn't click on any widgets
+            return super(LayoutCreator, self).on_touch_up(touch) #let the touch propogate
 
     def clickEdit(self,widgetToAdd,preview):#preview is the stacklayout that shows the preview
         if widgetToAdd == 'counter':
             self.previewedWidgets.append(Counter('test',[1,7,10],size_hint=(None,None)))
             preview.add_widget(self.previewedWidgets[-1])
-    
-    def removePreview(self,toRemove,preview):
-        preview.remove_widget(self.previewedWidgets[toRemove])
 
 class AppThing(App):
     def build(self):
