@@ -23,9 +23,12 @@ from kivy.uix.textinput import TextInput
 from kivy.uix.popup import Popup
 
 class _RetrievableText(TextInput):
+    """TextInput that has a getValue function to, well, get its value. Inputs that should be lists
+        must be separated by commas without spaces."""
     def __init__(self,isList,**kwargs):
         super(_RetrievableText,self).__init__(**kwargs)
         self.isList=isList
+
     def getValue(self):
         if self.isList:
             return self.text.split(',')
@@ -37,41 +40,40 @@ class _CustomBase(GridLayout):
     def __init__(self,**kwargs):
         super(_CustomBase,self).__init__(**kwargs)
         
-    def _getInfoDict(self):#overwrite this in subclasses returning a dict of value:type
+    def _getRequiredInfo(self):
+    #overwrite this in subclasses returning a tuple of tuples of ('value','type')
         pass
 
     def removeSelf(self):
         self.parent.remove_widget(self)
-    
-    #XXX work on asking for the info
-    #XXX need to fix sizing in the popup
-    #XXX DICTIONARIES AREN'T ORDERED AND IT SCREWED EVERYTHING UP FIX THAT
+        
     def askInfo(self):
-        close=Button()
-        content=StackLayout()
-        valueList=[]
-        for x,y in self._getInfoDict().iteritems():
+        close=Button(text='Add',size_hint=(1,.05))
+        content=StackLayout(spacing=5)
+        valueList=[]#empty list that gets filled with the inputs' getValue functions
+        for x,y in self._getRequiredInfo():
             content.add_widget(Label(text=x,size_hint=(None,None),size=(50,50)))
-            if y.split()[0]=='text':    #if it's length 1, then it isn't a list
+            
+            if y.split()[0]=='text':    #v if it's length 1, then it isn't a list
                 tmpWidget=_RetrievableText(len(y.split())-1,multiline=False,size_hint=(None,None),
-                        size=(50,50))
+                        size=(100,32))
+                #^ height 32 bc font size defaults to 10 and y padding defaults to 12
                 valueList.append(tmpWidget.getValue)
                 content.add_widget(tmpWidget)
+                
             elif y.split()[0]=='int':
                 tmpWidget=_RetrievableText(len(y.split())-1,multiline=False,input_type='number',
-                        size_hint=(None,None),size=(50,50))
+                        size_hint=(None,None),size=(100,32))
+                #^ height 32 bc font size defaults to 10 and y padding defaults to 12
                 valueList.append(tmpWidget.getValue)
                 content.add_widget(tmpWidget)
-        content.add_widget(close)
                 
-        askPane=Popup(title='Get Info',content=content,#i hope it doesn't break on attempting to call
-                auto_dismiss=False,on_dismiss=lambda x: self._setInfo(valueList))#functions in valueList
-        close.bind(on_release=askPane.dismiss)                         #after askPane's been closed
+        content.add_widget(close)#add the close button to the content of the popup
+                
+        askPane=Popup(title='Get Info',content=content,size_hint=(.5,None),height=1.35*content.height,
+                auto_dismiss=False,on_dismiss=lambda x: self._setInfo(valueList))
+        close.bind(on_release=askPane.dismiss)
         askPane.open()
-        
-        #self.askPane.add_widget(Button(text='if you see this then it might be working',
-            #on_release=lambda x: self.setInfo()))
-        return valueList
         
     def _setInfo(self,valueList):#overwrite this in the subclass using expected values
         pass
@@ -99,18 +101,27 @@ class Counter(_CustomBase):
         self.add_widget(self.display)
         self.add_widget(self.counters)
         
-    def _getInfoDict(self):
-        return {'Label':'text','Buttons':'int list'}
+    def _getRequiredInfo(self):
+        return (('Label','text'),('Buttons','int list'))
     
     def _setInfo(self,valueList):
-        self.col_default_width=len(valueList[1]())*50
-        self.width=len(valueList[1]())*50
-        self.label.text=valueList[0]()
-        self.counters.cols=len(valueList[1]())
-        for x in valueList[1]():
-            self.counters.add_widget(Button(text='+%i'%int(x),on_release=lambda z,w=int(x):self.update(w)))
-        for x in valueList[1]():
-            self.counters.add_widget(Button(text='-%i'%int(x),on_release=lambda z,w=-int(x):self.update(w)))
+        #i'll get around to error handling later...
+        for x in valueList:
+            if x() == '': return True #returning true prevents the popup from closing
+        try:
+            self.col_default_width=len(valueList[1]())*50
+            self.width=len(valueList[1]())*50
+            self.label.text=valueList[0]()
+            self.counters.cols=len(valueList[1]())
+            for x in valueList[1]():
+                self.counters.add_widget(Button(text='+%i'%int(x),
+                    on_release=lambda z,w=int(x):self.update(w)))
+            for x in valueList[1]():
+                self.counters.add_widget(Button(text='-%i'%int(x),
+                    on_release=lambda z,w=-int(x):self.update(w)))
+        except ValueError as err:
+            print(err.args)
+            return True
     
     def update(self,change):
         #take the current value, make it an int, add change to it, and turn the new value to a str
