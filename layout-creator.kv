@@ -19,11 +19,18 @@
 <LayoutCreator>:
     size: 1024, 768
     closed: True
-    StackLayout:
-        id: preview
-        size: 1024, 768
-        pos: (0,0)
-        spacing: 5
+    ScrollView:
+        do_scroll_x: False
+        size_hint: None,None
+        size: 1024,768
+        bar_pos_y: 'left'
+        
+        StackLayout:
+            id: preview
+            size_hint_y: None
+            size: 1024, 200
+            top:768
+            spacing: 5
 
     RelativeLayout:
         id: sideBar

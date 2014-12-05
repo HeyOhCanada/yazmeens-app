@@ -27,6 +27,7 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.pagelayout import PageLayout
 from kivy.uix.widget import Widget
 from kivy.uix.checkbox import CheckBox
+from kivy.uix.scrollview import ScrollView
 from kivy.animation import Animation
 from widgets import *
 Builder.load_file('layout-creator.kv')
@@ -39,6 +40,7 @@ Builder.load_file('layout-creator.kv')
 class LayoutCreator(FloatLayout):
     def __init__(self, **kwargs):
         super(LayoutCreator, self).__init__(**kwargs)
+        self.rowSize=0 #counter for current width of widgets on the current row
         self.previewedWidgets=[]#list to be filled with all the widgets added
         self.deleteMode=False#when set to true, allows widgets to be deleted on touch
         
@@ -46,6 +48,7 @@ class LayoutCreator(FloatLayout):
         if self.closed and self.deleteMode:#if delete mode is on and the sidebar is closed
             for x in self.previewedWidgets[:]:#loop through the list of widgets
                 if x.collide_point(*touch.pos):#if you touched a widget,
+                    self.rowSize -= x.width #subtract its width from the current row width
                     x.removeSelf()#call its removeSelf method
                     self.previewedWidgets.remove(x)#and remove it from our list of widgets
                     return True
@@ -59,6 +62,24 @@ class LayoutCreator(FloatLayout):
         elif widgetToAdd == 'checkbox':
             self.previewedWidgets.append(YesNo(size_hint=(None,None)))
         preview.add_widget(self.previewedWidgets[-1])
+        #self.rowSize+=self.previewedWidgets[-1].width
+        #if self.rowSize >= 1024:
+            #preview.size = (1024, preview.width+210)
+            #self.rowSize-=1024
+        #print self.rowSize
+        #print self.previewedWidgets[-1].width
+        print preview.size
+        print self.rowSize
+        
+class Test(ScrollView):
+    def __init__(self):
+        super(Test, self).__init__(size_hint=(None,None),size=(400,400))
+        self.layout = GridLayout(cols=1,spacing=10,size_hint_y=None)
+        self.layout.bind(minimum_height=self.layout.setter('height'))
+        for i in xrange(30):
+            btn = Button(text=str(i),size_hint_y=None,height=40)
+            self.layout.add_widget(btn)
+        self.add_widget(self.layout)
 
 class AppThing(App):
     def build(self):

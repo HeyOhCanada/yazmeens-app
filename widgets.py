@@ -85,12 +85,15 @@ class Counter(_CustomBase):
     def __init__(self,**kwargs):
         #create subwidgets
         
-        self.label=Label(size_hint_y=None, height=40,halign='right',split_str=' ')
+        self.label=Label(size_hint_y=None, height=40,halign='center',split_str=' ')
         self.display=Label(text='0',size_hint_y=None, height=40)
         self.counters=GridLayout(rows=2,size_hint_y=None, height=120)
         
         self.askInfo()
-        super(Counter, self).__init__(rows=3,col_force_default=True,height=200,**kwargs)
+        
+            
+        super(Counter, self).__init__(size_hint_y=None,rows=3,
+            col_force_default=True,height=200,**kwargs)
         
         
         
@@ -127,6 +130,13 @@ class Counter(_CustomBase):
         self.add_widget(self.label)
         self.add_widget(self.display)
         self.add_widget(self.counters)
+        
+        #i wish i could do this a better way but i can't be bothered to think of it        
+        if self.parent.parent.parent.rowSize+self.width >= 1024:
+            self.parent.height+=210
+            self.parent.parent.parent.rowSize = self.width
+        else:
+            self.parent.parent.parent.rowSize+=self.width
     
     def update(self,change):
         #take the current value, make it an int, add change to it, and turn the new value to a str
@@ -134,8 +144,8 @@ class Counter(_CustomBase):
         
 class YesNo(_CustomBase):
     def __init__(self,**kwargs):
-        super(YesNo, self).__init__(rows=2,height=200,**kwargs)
-        self.label=Label(size_hint_y=None,height=100,text_size=(100,100),halign='right',split_str=' ')
+        super(YesNo, self).__init__(size_hint_y=None,rows=2,height=200,**kwargs)
+        self.label=Label(size_hint_y=None,height=100,text_size=(100,100),halign='center',split_str=' ')
         self.checkbox=ToggleButton(text='NO',size_hint_y=None,height=100)
         self.checkbox.bind(state=lambda x,y: self.setText())
         
@@ -155,6 +165,13 @@ class YesNo(_CustomBase):
         self.label.text=valueList[0]()
         self.add_widget(self.label)
         self.add_widget(self.checkbox)
+        
+        #i wish i could do this a better way but i can't be bothered to think of it        
+        if self.parent.parent.parent.rowSize+self.width >= 1024:
+            self.parent.height+=210
+            self.parent.parent.parent.rowSize = self.width
+        else:
+            self.parent.parent.parent.rowSize+=self.width
         
     def setText(self):
         if self.checkbox.text == 'YES':
