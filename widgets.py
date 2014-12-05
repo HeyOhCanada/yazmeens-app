@@ -40,19 +40,15 @@ class _CustomBase(GridLayout):
     """The base class for every widget in this module."""
     def __init__(self,**kwargs):
         super(_CustomBase,self).__init__(**kwargs)
-        
-    def _getRequiredInfo(self):
-    #overwrite this in subclasses returning a tuple of tuples of ('value','type')
-        pass
 
     def removeSelf(self):
         self.parent.remove_widget(self)
         
-    def askInfo(self):
+    def askInfo(self,requiredInfo):
         close=Button(text='Add',size_hint=(1,.5))
         content=StackLayout(spacing=5)
         valueList=[]#empty list that gets filled with the inputs' getValue functions
-        for x,y in self._getRequiredInfo():
+        for x,y in requiredInfo:
             content.add_widget(Label(text=x,size_hint=(None,None),size=(50,50)))
             
             if y.split()[0]=='text':    #v if it's length 1, then it isn't a list
@@ -89,16 +85,11 @@ class Counter(_CustomBase):
         self.display=Label(text='0',size_hint_y=None, height=40)
         self.counters=GridLayout(rows=2,size_hint_y=None, height=120)
         
-        self.askInfo()
+        self.askInfo((('Label','text'),('Buttons','int list')))
         
             
         super(Counter, self).__init__(size_hint_y=None,rows=3,
             col_force_default=True,height=200,**kwargs)
-        
-        
-        
-    def _getRequiredInfo(self):
-        return (('Label','text'),('Buttons','int list'))
     
     def _setInfo(self,valueList):
         for x in valueList:
@@ -149,12 +140,7 @@ class YesNo(_CustomBase):
         self.checkbox=ToggleButton(text='NO',size_hint_y=None,height=100)
         self.checkbox.bind(state=lambda x,y: self.setText())
         
-        self.askInfo()
-        
-        
-               
-    def _getRequiredInfo(self):
-        return (('Label','text'),)
+        self.askInfo((('Label','text'),))
         
     def _setInfo(self,valueList):
         if valueList[0]() == '':
