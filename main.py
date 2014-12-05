@@ -32,11 +32,6 @@ from kivy.animation import Animation
 from widgets import *
 Builder.load_file('layout-creator.kv')
 
-#class CountingButton(GridLayout):
-    #def callback(self, numChange, display):
-#take the currently displayed number, change it to an int, add numChange, and make it a string
-        #display.text=str(int(display.text)+numChange)
-
 class LayoutCreator(FloatLayout):
     def __init__(self, **kwargs):
         super(LayoutCreator, self).__init__(**kwargs)
@@ -62,8 +57,6 @@ class LayoutCreator(FloatLayout):
         elif widgetToAdd == 'checkbox':
             self.previewedWidgets.append(YesNo(size_hint=(None,None)))
         preview.add_widget(self.previewedWidgets[-1])
-        print preview.size
-        print self.rowSize
         
 class Test(ScrollView):
     def __init__(self):

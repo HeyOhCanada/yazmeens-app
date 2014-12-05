@@ -45,7 +45,11 @@ class _CustomBase(GridLayout):
         self.parent.remove_widget(self)
         
     def askInfo(self,requiredInfo):
-        close=Button(text='Add',size_hint=(1,.5))
+        close=Button(text='Add')
+        cancel=Button(text='Cancel')
+        buttonGrid=GridLayout(cols=2,size_hint_y=.5)
+        buttonGrid.add_widget(close)
+        buttonGrid.add_widget(cancel)
         content=StackLayout(spacing=5)
         valueList=[]#empty list that gets filled with the inputs' getValue functions
         for x,y in requiredInfo:
@@ -65,12 +69,13 @@ class _CustomBase(GridLayout):
                 valueList.append(tmpWidget.getValue)
                 content.add_widget(tmpWidget)
                 
-        content.add_widget(close)#add the close button to the content of the popup
-                
-        askPane=Popup(title='Get Info',content=content,size_hint=(.5,None),height=1.75*content.height,
-                auto_dismiss=False,on_dismiss=lambda x: self._setInfo(valueList))
-        close.bind(on_release=askPane.dismiss)
-        askPane.open()
+        content.add_widget(buttonGrid)        
+        self.askPane=Popup(title='Get Info',content=content,size_hint=(.5,None),
+            height=1.75*content.height,
+                auto_dismiss=False,)#on_dismiss=lambda x: self._setInfo(valueList))
+        close.bind(on_release=lambda x: self._setInfo(valueList,False))#askPane.dismiss)
+        cancel.bind(on_release=lambda x: self._setInfo(valueList,True))
+        self.askPane.open()
         
     def _setInfo(self,valueList):#overwrite this in the subclass using expected values
         pass
@@ -91,7 +96,10 @@ class Counter(_CustomBase):
         super(Counter, self).__init__(size_hint_y=None,rows=3,
             col_force_default=True,height=200,**kwargs)
     
-    def _setInfo(self,valueList):
+    def _setInfo(self,valueList,cancelled):
+        if cancelled:
+            self.askPane.dismiss()
+            return None #return to exit the function
         for x in valueList:
             if x() == '':
                 #add a more descriptive message later
@@ -103,6 +111,8 @@ class Counter(_CustomBase):
                 #add a more descriptive message later
                 Popup(title='Error',content=Label(text='Invalid integer'),size_hint=(.5,.5)).open()
                 return True #not a number, don't close
+                
+        self.askPane.dismiss()
         
         #50 is a good size for the buttons, so the width should be the number of buttons * 50
         self.col_default_width=len(valueList[1]())*50
@@ -142,15 +152,19 @@ class YesNo(_CustomBase):
         
         self.askInfo((('Label','text'),))
         
-    def _setInfo(self,valueList):
+    def _setInfo(self,valueList,cancelled):
+        if cancelled:
+            self.askPane.dismiss()
+            return None #exit the function
         if valueList[0]() == '':
             #add a more descriptive message later
             Popup(title='Error',content=Label(text='Empty value'),size_hint=(.5,.5)).open()
-            return True #don't close the first popup
+            return None #exit without closing the first popup
         
         self.label.text=valueList[0]()
         self.add_widget(self.label)
         self.add_widget(self.checkbox)
+        self.askPane.dismiss()
         
         #i wish i could do this a better way but i can't be bothered to think of it        
         if self.parent.parent.parent.rowSize+self.width >= 1024:
