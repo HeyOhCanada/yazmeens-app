@@ -41,16 +41,18 @@
             size_hint: (.05,1)
             #swaps the position between 204 and 980
             on_release: Animation(x=(-((sideBar.x-204)-776))+204,d=.5,t='in_out_quad').start(sideBar)
+            
         Button:
             text: 'Counter'
             size_hint: (None, None)
             size: (600, 200)
             pos: 50, 560
-            on_release: root.clickEdit('counter',preview)
-        Button:
+            on_release: root.clickEdit('counter',preview)     
+               
+        ToggleButton:
             text: 'Delete'
+            pos: 100, 360
             size_hint: (None, None)
-            size: (600, 200)
-            pos: 50, 360
+            size: (100, 100)
             on_release: root.deleteMode = not root.deleteMode
 

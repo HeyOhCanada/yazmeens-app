@@ -26,6 +26,7 @@ from kivy.uix.label import Label
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.pagelayout import PageLayout
 from kivy.uix.widget import Widget
+from kivy.uix.checkbox import CheckBox
 from kivy.animation import Animation
 from widgets import Counter
 Builder.load_file('layout-creator.kv')
