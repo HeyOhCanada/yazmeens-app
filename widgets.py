@@ -48,7 +48,7 @@ class _CustomBase(GridLayout):
         self.parent.remove_widget(self)
         
     def askInfo(self):
-        close=Button(text='Add',size_hint=(1,.05))
+        close=Button(text='Add',size_hint=(1,.5))
         content=StackLayout(spacing=5)
         valueList=[]#empty list that gets filled with the inputs' getValue functions
         for x,y in self._getRequiredInfo():
@@ -70,7 +70,7 @@ class _CustomBase(GridLayout):
                 
         content.add_widget(close)#add the close button to the content of the popup
                 
-        askPane=Popup(title='Get Info',content=content,size_hint=(.5,None),height=1.35*content.height,
+        askPane=Popup(title='Get Info',content=content,size_hint=(.5,None),height=1.75*content.height,
                 auto_dismiss=False,on_dismiss=lambda x: self._setInfo(valueList))
         close.bind(on_release=askPane.dismiss)
         askPane.open()
@@ -81,21 +81,16 @@ class _CustomBase(GridLayout):
 class Counter(_CustomBase):
     """A counter widget to be used with Yazmeen's App. Label is what the counter will be labelled
        as, and numList is a list of integers used for the increase/decrease buttons."""
-    def __init__(self,**kwargs):#label,numList,**kwargs):
-    #50 is a good size for the buttons, so the width should be the number of buttons * 50
+    def __init__(self,**kwargs):
+        #create subwidgets
+        
         self.label=Label(size_hint_y=None, height=40)
         self.display=Label(text='0',size_hint_y=None, height=40)
         self.counters=GridLayout(rows=2,size_hint_y=None, height=120)
+        
         self.askInfo()
         super(Counter, self).__init__(rows=3,col_force_default=True,height=200,**kwargs)
-            #col_default_width=len(numList)*50,width=len(numList)*50,height=200,**kwargs)
-        #create all subwidgets
         
-        #loop over numList to add the inc/dec buttons
-        #for x in numList:
-            #self.counters.add_widget(Button(text='+%i'%x,on_release=lambda z,w=x:self.update(w)))
-        #for x in numList:
-            #self.counters.add_widget(Button(text='-%i'%x,on_release=lambda z,w=-x:self.update(w)))
         #add the subwidgets
         self.add_widget(self.label)
         self.add_widget(self.display)
@@ -105,23 +100,29 @@ class Counter(_CustomBase):
         return (('Label','text'),('Buttons','int list'))
     
     def _setInfo(self,valueList):
-        #i'll get around to error handling later...
         for x in valueList:
-            if x() == '': return True #returning true prevents the popup from closing
-        try:
-            self.col_default_width=len(valueList[1]())*50
-            self.width=len(valueList[1]())*50
-            self.label.text=valueList[0]()
-            self.counters.cols=len(valueList[1]())
-            for x in valueList[1]():
-                self.counters.add_widget(Button(text='+%i'%int(x),
-                    on_release=lambda z,w=int(x):self.update(w)))
-            for x in valueList[1]():
-                self.counters.add_widget(Button(text='-%i'%int(x),
-                    on_release=lambda z,w=-int(x):self.update(w)))
-        except ValueError as err:
-            print(err.args)
-            return True
+            if x() == '':
+                #add a more descriptive message later
+                Popup(title='Error',content=Label(text='Empty value'),size_hint=(.5,.5)).open()
+                return True #returning true prevents the popup from closing
+            
+        for x in valueList[1]():#may not need this, check the tablet keyboard, consider keeping it tho
+            if not x.isdigit():
+                #add a more descriptive message later
+                Popup(title='Error',content=Label(text='Invalid integer'),size_hint=(.5,.5)).open()
+                return True #not a number, don't close
+        
+        #50 is a good size for the buttons, so the width should be the number of buttons * 50
+        self.col_default_width=len(valueList[1]())*50
+        self.width=len(valueList[1]())*50
+        self.label.text=valueList[0]()
+        self.counters.cols=len(valueList[1]())
+        for x in valueList[1]():
+            self.counters.add_widget(Button(text='+%i'%int(x),
+                on_release=lambda z,w=int(x):self.update(w)))
+        for x in valueList[1]():
+            self.counters.add_widget(Button(text='-%i'%int(x),
+                on_release=lambda z,w=-int(x):self.update(w)))
     
     def update(self,change):
         #take the current value, make it an int, add change to it, and turn the new value to a str
