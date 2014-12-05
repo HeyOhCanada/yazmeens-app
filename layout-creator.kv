@@ -45,9 +45,16 @@
         Button:
             text: 'Counter'
             size_hint: (None, None)
-            size: (600, 200)
+            size: (200, 200)
             pos: 50, 560
-            on_release: root.clickEdit('counter',preview)     
+            on_release: root.clickEdit('counter',preview)
+            
+        Button:
+            text: 'Check Box'
+            size_hint: (None, None)
+            size: (200, 200)
+            pos: 550, 560
+            on_release: root.clickEdit('checkbox',preview)     
                
         ToggleButton:
             text: 'Delete'

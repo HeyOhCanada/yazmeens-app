@@ -28,7 +28,7 @@ from kivy.uix.pagelayout import PageLayout
 from kivy.uix.widget import Widget
 from kivy.uix.checkbox import CheckBox
 from kivy.animation import Animation
-from widgets import Counter
+from widgets import *
 Builder.load_file('layout-creator.kv')
 
 #class CountingButton(GridLayout):
@@ -55,9 +55,10 @@ class LayoutCreator(FloatLayout):
 
     def clickEdit(self,widgetToAdd,preview):#preview is the stacklayout that shows the preview
         if widgetToAdd == 'counter':
-            self.previewedWidgets.append(Counter(size_hint=(None,None)))#'test',[1,7,10],size_hint=(None,None)))
-            #self.add_widget(self.previewedWidgets[-1].askInfo())
-            preview.add_widget(self.previewedWidgets[-1])
+            self.previewedWidgets.append(Counter(size_hint=(None,None)))
+        elif widgetToAdd == 'checkbox':
+            self.previewedWidgets.append(YesNo(size_hint=(None,None)))
+        preview.add_widget(self.previewedWidgets[-1])
 
 class AppThing(App):
     def build(self):

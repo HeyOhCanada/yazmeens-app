@@ -21,6 +21,7 @@ from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.uix.textinput import TextInput
 from kivy.uix.popup import Popup
+from kivy.uix.togglebutton import ToggleButton
 
 class _RetrievableText(TextInput):
     """TextInput that has a getValue function to, well, get its value. Inputs that should be lists
@@ -84,17 +85,14 @@ class Counter(_CustomBase):
     def __init__(self,**kwargs):
         #create subwidgets
         
-        self.label=Label(size_hint_y=None, height=40)
+        self.label=Label(size_hint_y=None, height=40,halign='right',split_str=' ')
         self.display=Label(text='0',size_hint_y=None, height=40)
         self.counters=GridLayout(rows=2,size_hint_y=None, height=120)
         
         self.askInfo()
         super(Counter, self).__init__(rows=3,col_force_default=True,height=200,**kwargs)
         
-        #add the subwidgets
-        self.add_widget(self.label)
-        self.add_widget(self.display)
-        self.add_widget(self.counters)
+        
         
     def _getRequiredInfo(self):
         return (('Label','text'),('Buttons','int list'))
@@ -115,6 +113,7 @@ class Counter(_CustomBase):
         #50 is a good size for the buttons, so the width should be the number of buttons * 50
         self.col_default_width=len(valueList[1]())*50
         self.width=len(valueList[1]())*50
+        self.label.text_size=(len(valueList[1]())*50,40)
         self.label.text=valueList[0]()
         self.counters.cols=len(valueList[1]())
         for x in valueList[1]():
@@ -123,7 +122,42 @@ class Counter(_CustomBase):
         for x in valueList[1]():
             self.counters.add_widget(Button(text='-%i'%int(x),
                 on_release=lambda z,w=-int(x):self.update(w)))
+        
+        #add the subwidgets
+        self.add_widget(self.label)
+        self.add_widget(self.display)
+        self.add_widget(self.counters)
     
     def update(self,change):
         #take the current value, make it an int, add change to it, and turn the new value to a str
         self.display.text=str(int(self.display.text)+change)
+        
+class YesNo(_CustomBase):
+    def __init__(self,**kwargs):
+        super(YesNo, self).__init__(rows=2,height=200,**kwargs)
+        self.label=Label(size_hint_y=None,height=100,text_size=(100,100),halign='right',split_str=' ')
+        self.checkbox=ToggleButton(text='NO',size_hint_y=None,height=100)
+        self.checkbox.bind(state=lambda x,y: self.setText())
+        
+        self.askInfo()
+        
+        
+               
+    def _getRequiredInfo(self):
+        return (('Label','text'),)
+        
+    def _setInfo(self,valueList):
+        if valueList[0]() == '':
+            #add a more descriptive message later
+            Popup(title='Error',content=Label(text='Empty value'),size_hint=(.5,.5)).open()
+            return True #don't close the first popup
+        
+        self.label.text=valueList[0]()
+        self.add_widget(self.label)
+        self.add_widget(self.checkbox)
+        
+    def setText(self):
+        if self.checkbox.text == 'YES':
+            self.checkbox.text = 'NO'
+        else:
+            self.checkbox.text = 'YES'
