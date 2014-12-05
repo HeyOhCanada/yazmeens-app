@@ -47,7 +47,7 @@ class LayoutCreator(FloatLayout):
     def on_touch_up(self, touch):
         if self.closed and self.deleteMode:#if delete mode is on and the sidebar is closed
             for x in self.previewedWidgets[:]:#loop through the list of widgets
-                if x.collide_point(*touch.pos):#if you touched a widget,
+                if x.collide_point(*x.to_widget(*touch.pos,relative=True)):#if you touched a widget,
                     self.rowSize -= x.width #subtract its width from the current row width
                     x.removeSelf()#call its removeSelf method
                     self.previewedWidgets.remove(x)#and remove it from our list of widgets
@@ -62,12 +62,6 @@ class LayoutCreator(FloatLayout):
         elif widgetToAdd == 'checkbox':
             self.previewedWidgets.append(YesNo(size_hint=(None,None)))
         preview.add_widget(self.previewedWidgets[-1])
-        #self.rowSize+=self.previewedWidgets[-1].width
-        #if self.rowSize >= 1024:
-            #preview.size = (1024, preview.width+210)
-            #self.rowSize-=1024
-        #print self.rowSize
-        #print self.previewedWidgets[-1].width
         print preview.size
         print self.rowSize
         
