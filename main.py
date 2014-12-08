@@ -56,6 +56,8 @@ class LayoutCreator(FloatLayout):
             self.previewedWidgets.append(Counter(size_hint=(None,None)))
         elif widgetToAdd == 'checkbox':
             self.previewedWidgets.append(YesNo(size_hint=(None,None)))
+        elif widgetToAdd == 'textbox':
+            self.previewedWidgets.append(TextBox(size_hint=(None,None)))
         preview.add_widget(self.previewedWidgets[-1])
         
 class Test(ScrollView):

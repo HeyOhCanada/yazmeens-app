@@ -61,7 +61,14 @@
             size_hint: (None, None)
             size: (200, 200)
             pos: 550, 560
-            on_release: root.clickEdit('checkbox',preview)     
+            on_release: root.clickEdit('checkbox',preview)    
+            
+        Button:
+            text: 'Text Box'
+            size_hint: (None, None)
+            size: (200, 200)
+            pos: 300, 560
+            on_release: root.clickEdit('textbox',preview) 
                
         ToggleButton:
             text: 'Delete'
