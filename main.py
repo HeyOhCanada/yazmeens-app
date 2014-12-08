@@ -59,16 +59,6 @@ class LayoutCreator(FloatLayout):
         elif widgetToAdd == 'textbox':
             self.previewedWidgets.append(TextBox(size_hint=(None,None)))
         preview.add_widget(self.previewedWidgets[-1])
-        
-class Test(ScrollView):
-    def __init__(self):
-        super(Test, self).__init__(size_hint=(None,None),size=(400,400))
-        self.layout = GridLayout(cols=1,spacing=10,size_hint_y=None)
-        self.layout.bind(minimum_height=self.layout.setter('height'))
-        for i in xrange(30):
-            btn = Button(text=str(i),size_hint_y=None,height=40)
-            self.layout.add_widget(btn)
-        self.add_widget(self.layout)
 
 class AppThing(App):
     def build(self):

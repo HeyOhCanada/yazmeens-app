@@ -96,6 +96,10 @@ class _CustomBase(GridLayout):
     def _setInfo(self,valueList):#overwrite this in the subclass using expected values
         pass
         
+    def _cancelled(self):#call when cancelled is true in _setInfo
+        self.parent.parent.parent.previewedWidgets.remove(self)
+        self.removeSelf()
+        
     def _addHeight(self):
         if self.parent.parent.parent.rowSize+self.width >= 1024:
             self.parent.height+=210
@@ -121,6 +125,7 @@ class Counter(_CustomBase):
     
     def _setInfo(self,valueList,cancelled):
         if cancelled:
+            self._cancelled()
             self.askPane.dismiss()
             return None #return to exit the function
         for x in valueList:
@@ -178,6 +183,7 @@ class YesNo(_CustomBase):
         
     def _setInfo(self,valueList,cancelled):
         if cancelled:
+            self._cancelled()
             self.askPane.dismiss()
             return None #exit the function
         if valueList[0]() == '':
@@ -213,6 +219,7 @@ class TextBox(_CustomBase):
         
     def _setInfo(self,valueList,cancelled):
         if cancelled:
+            self._cancelled()
             self.askPane.dismiss()
             return None #exit the function
         if valueList[0]() == '':
