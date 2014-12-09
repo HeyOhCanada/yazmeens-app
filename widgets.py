@@ -60,11 +60,11 @@ class _CustomBase(GridLayout):
         self.parent.remove_widget(self)
 
     def askInfo(self,requiredInfo):
-        #i don't know why the buttons got so big all the sudden. they were working before just fine
+        #the button size is wrong on my laptop but right on the tablet so
         close=Button(text='Add')
         cancel=Button(text='Cancel')
 
-        buttonGrid=GridLayout(cols=2)
+        buttonGrid=GridLayout(cols=2,size_hint_y=.5)
         buttonGrid.add_widget(close)
         buttonGrid.add_widget(cancel)
         content=StackLayout(spacing=5)
@@ -85,7 +85,7 @@ class _CustomBase(GridLayout):
                 #^ height 32 bc font size defaults to 10 and y padding defaults to 12
                 valueList.append(tmpWidget.getValue)
                 content.add_widget(tmpWidget)
-        buttonGrid.height=.5*content.height #size_hint_y=.5 should do this but i guess not
+        #buttonGrid.height=.5*content.height #size_hint_y=.5 should do this but i guess not
         content.add_widget(buttonGrid)
         self.askPane=Popup(title='Get Info',content=content,size_hint=(.5,None),
             height=1.5*content.height,
