@@ -1,0 +1,5 @@
+#python bytecode
+*.py[cod]
+
+#this file comes from the editor i use
+.zedstate

@@ -55,24 +55,30 @@
             size: (200, 200)
             pos: 50, 560
             on_release: root.clickEdit('counter',preview)
-            
-        Button:
-            text: 'Check Box'
-            size_hint: (None, None)
-            size: (200, 200)
-            pos: 550, 560
-            on_release: root.clickEdit('checkbox',preview)    
-            
+        
         Button:
             text: 'Text Box'
             size_hint: (None, None)
             size: (200, 200)
             pos: 300, 560
             on_release: root.clickEdit('textbox',preview) 
+            
+        Button:
+            text: 'Check Box'
+            size_hint: (None, None)
+            size: (200, 200)
+            pos: 550, 560
+            on_release: root.clickEdit('checkbox',preview)
+            
+        Button:
+            text: 'Save Layout'
+            size_hint: (None, None)
+            size: (200, 200)
+            pos: 50, 260     
                
         ToggleButton:
             text: 'Delete'
-            pos: 100, 360
+            pos: 300, 360
             size_hint: (None, None)
             size: (100, 100)
             on_release: root.deleteMode = not root.deleteMode

@@ -29,16 +29,17 @@ from kivy.uix.widget import Widget
 from kivy.uix.checkbox import CheckBox
 from kivy.uix.scrollview import ScrollView
 from kivy.animation import Animation
+from ConfigParser import ConfigParser
 from widgets import *
 Builder.load_file('layout-creator.kv')
-
 class LayoutCreator(FloatLayout):
     def __init__(self, **kwargs):
         super(LayoutCreator, self).__init__(**kwargs)
         self.rowSize=0 #counter for current width of widgets on the current row
         self.previewedWidgets=[]#list to be filled with all the widgets added
         self.deleteMode=False#when set to true, allows widgets to be deleted on touch
-        
+        self.config = ConfigParser()
+
     def on_touch_up(self, touch):
         if self.closed and self.deleteMode:#if delete mode is on and the sidebar is closed
             for x in self.previewedWidgets[:]:#loop through the list of widgets

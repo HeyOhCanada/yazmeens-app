@@ -30,7 +30,7 @@ class _RetrievableText(TextInput):
     def __init__(self,isList,autoNewline=False,**kwargs):
         super(_RetrievableText,self).__init__(**kwargs)
         self.isList=isList
-        
+
         if autoNewline: #only define this function if automatic newlines are desired
             def insert_text(substring,from_undo=False):#max cols 10
                 if self.cursor_col+len(substring) > 10:
@@ -44,7 +44,7 @@ class _RetrievableText(TextInput):
                 else:
                     return super(_RetrievableText,self).insert_text(substring, from_undo=from_undo)
             self.insert_text=insert_text
-            
+
     def getValue(self):
         if self.isList:
             return self.text.split(',')
@@ -58,29 +58,30 @@ class _CustomBase(GridLayout):
 
     def removeSelf(self):
         self.parent.remove_widget(self)
-        
+
     def askInfo(self,requiredInfo):
         #i don't know why the buttons got so big all the sudden. they were working before just fine
         close=Button(text='Add')
         cancel=Button(text='Cancel')
+
         buttonGrid=GridLayout(cols=2)
         buttonGrid.add_widget(close)
-        buttonGrid.add_widget(cancel)    
+        buttonGrid.add_widget(cancel)
         content=StackLayout(spacing=5)
         valueList=[]#empty list that gets filled with the inputs' getValue functions
         for x,y in requiredInfo:
             content.add_widget(Label(text=x,size_hint=(None,None),size=(50,32)))
-            
+
             if y.split()[0]=='text':    #v if it's length 1, then it isn't a list
                 tmpWidget=_RetrievableText(len(y.split())-1,multiline=False,size_hint=(None,None),
-                        size=(100,32))
+                        write_tab=False,size=(100,32))
                 #^ height 32 bc font size defaults to 10 and y padding defaults to 12
                 valueList.append(tmpWidget.getValue)
                 content.add_widget(tmpWidget)
-                
+
             elif y.split()[0]=='int':
                 tmpWidget=_RetrievableText(len(y.split())-1,multiline=False,input_type='number',
-                        size_hint=(None,None),size=(100,32))
+                        write_tab=False,size_hint=(None,None),size=(100,32))
                 #^ height 32 bc font size defaults to 10 and y padding defaults to 12
                 valueList.append(tmpWidget.getValue)
                 content.add_widget(tmpWidget)
@@ -92,14 +93,14 @@ class _CustomBase(GridLayout):
         close.bind(on_release=lambda x: self._setInfo(valueList,False))#askPane.dismiss)
         cancel.bind(on_release=lambda x: self._setInfo(valueList,True))
         self.askPane.open()
-        
+
     def _setInfo(self,valueList):#overwrite this in the subclass using expected values
         pass
-        
+
     def _cancelled(self):#call when cancelled is true in _setInfo
         self.parent.parent.parent.previewedWidgets.remove(self)
         self.removeSelf()
-        
+
     def _addHeight(self):
         if self.parent.parent.parent.rowSize+self.width >= 1024:
             self.parent.height+=210
@@ -112,17 +113,17 @@ class Counter(_CustomBase):
        as, and numList is a list of integers used for the increase/decrease buttons."""
     def __init__(self,**kwargs):
         #create subwidgets
-        
+
         self.label=Label(size_hint_y=None, height=40,halign='center',split_str=' ')
         self.display=Label(text='0',size_hint_y=None, height=40)
         self.counters=GridLayout(rows=2,size_hint_y=None, height=120)
-        
+
         self.askInfo((('Label','text'),('Buttons','int list')))
-        
-            
+
+
         super(Counter, self).__init__(size_hint_y=None,rows=3,
             col_force_default=True,height=200,**kwargs)
-    
+
     def _setInfo(self,valueList,cancelled):
         if cancelled:
             self._cancelled()
@@ -133,15 +134,15 @@ class Counter(_CustomBase):
                 #add a more descriptive message later
                 Popup(title='Error',content=Label(text='Empty value'),size_hint=(.5,.5)).open()
                 return True #returning true prevents the popup from closing
-            
+
         for x in valueList[1]():#may not need this, check the tablet keyboard, consider keeping it tho
             if not x.isdigit():
                 #add a more descriptive message later
                 Popup(title='Error',content=Label(text='Invalid integer'),size_hint=(.5,.5)).open()
                 return True #not a number, don't close
-                
+
         self.askPane.dismiss()
-        
+
         #50 is a good size for the buttons, so the width should be the number of buttons * 50
         self.col_default_width=len(valueList[1]())*50
         self.width=len(valueList[1]())*50
@@ -154,33 +155,33 @@ class Counter(_CustomBase):
         for x in valueList[1]():
             self.counters.add_widget(Button(text='-%i'%int(x),
                 on_release=lambda z,w=-int(x):self.update(w)))
-        
+
         #add the subwidgets
         self.add_widget(self.label)
         self.add_widget(self.display)
         self.add_widget(self.counters)
-        
+
         self._addHeight()
-        #i wish i could do this a better way but i can't be bothered to think of it        
+        #i wish i could do this a better way but i can't be bothered to think of it
         #if self.parent.parent.parent.rowSize+self.width >= 1024:
             #self.parent.height+=210
             #self.parent.parent.parent.rowSize = self.width
         #else:
             #self.parent.parent.parent.rowSize+=self.width
-    
+
     def update(self,change):
         #take the current value, make it an int, add change to it, and turn the new value to a str
         self.display.text=str(int(self.display.text)+change)
-        
+
 class YesNo(_CustomBase):
     def __init__(self,**kwargs):
         super(YesNo, self).__init__(size_hint_y=None,rows=2,height=200,**kwargs)
         self.label=Label(size_hint_y=None,height=100,text_size=(100,100),halign='center',split_str=' ')
         self.checkbox=ToggleButton(text='NO',size_hint_y=None,height=100)
         self.checkbox.bind(state=lambda x,y: self.setText())
-        
+
         self.askInfo((('Label','text'),))
-        
+
     def _setInfo(self,valueList,cancelled):
         if cancelled:
             self._cancelled()
@@ -190,33 +191,33 @@ class YesNo(_CustomBase):
             #add a more descriptive message later
             Popup(title='Error',content=Label(text='Empty value'),size_hint=(.5,.5)).open()
             return None #exit without closing the first popup
-        
+
         self.label.text=valueList[0]()
         self.add_widget(self.label)
         self.add_widget(self.checkbox)
         self.askPane.dismiss()
-        
+
         self._addHeight()
-        #i wish i could do this a better way but i can't be bothered to think of it        
+        #i wish i could do this a better way but i can't be bothered to think of it
         #if self.parent.parent.parent.rowSize+self.width >= 1024:
             #self.parent.height+=210
             #self.parent.parent.parent.rowSize = self.width
         #else:
             #self.parent.parent.parent.rowSize+=self.width
-        
+
     def setText(self):
         if self.checkbox.text == 'YES':
             self.checkbox.text = 'NO'
         else:
             self.checkbox.text = 'YES'
-            
+
 class TextBox(_CustomBase):
     def __init__(self, **kwargs):
         super(TextBox, self).__init__(rows=2, height=200, **kwargs)
         self.label=Label(height=50,text_size=(100,50),halign='center',split_str=' ')
         self.input=_RetrievableText(False,autoNewline=True)
         self.askInfo((('Label','text'),))
-        
+
     def _setInfo(self,valueList,cancelled):
         if cancelled:
             self._cancelled()
@@ -226,10 +227,10 @@ class TextBox(_CustomBase):
             #add a more descriptive message later
             Popup(title='Error',content=Label(text='Empty value'),size_hint=(.5,.5)).open()
             return None #exit without closing the first popup
-            
+
         self.label.text=valueList[0]()
         self.add_widget(self.label)
         self.add_widget(self.input)
         self.askPane.dismiss()
-        
+
         self._addHeight()
