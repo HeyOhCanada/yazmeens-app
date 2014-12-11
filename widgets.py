@@ -234,3 +234,5 @@ class TextBox(_CustomBase):
         self.askPane.dismiss()
 
         self._addHeight()
+        elif valueList[-1]:
+            pass
